@@ -17,6 +17,8 @@ struct Tocken {
     bool check_initialized();
     void get_DAG(std::string sentence);
     
+    std::vector<std::string> _cut_DAG_NO_HMM(std::string sentence);
+    
     Tocken() { _initialized = false; };
     ~Tocken() {};
     
@@ -24,6 +26,7 @@ private:
     size_t _total_frequence;
     std::map<std::string, size_t> _freMap;
     std::map<size_t, std::vector<int>> _DAG;
+    std::map<size_t, std::pair<double, size_t>> _route;
     
     bool _initialized;
 };

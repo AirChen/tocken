@@ -7,40 +7,61 @@
 
 #include "tocken.hpp"
 #include <fstream>
+#include <sstream>
 #include <iostream>
 
 void Tocken::loadPreFrequenceDict(std::string path) {
-    std::ifstream fs(path);
+    std::wifstream wfs(path);
     _total_frequence = 0;
-    if (fs.is_open()) {
-        std::string line;
-        while(std::getline(fs, line))
+    
+    if (wfs.is_open()) {
+        std::wstring line;
+        while(std::getline(wfs, line))
         {
-            char* tok = strtok((char*)line.c_str(), " ");
-            char* tok1 = strtok(NULL, " ");
-//                std::cout << tok << " " << tok1 << std::endl;
+            std::wstring world;
+            std::wstring freqW;
             
-            int req = 0;
-            while (*tok1) {
-                req = *tok1 - '0' + req * 10;
-                tok1++;
-            }
-            std::cout << tok << " " << req << std::endl;
+            std::wistringstream lineStream(line);
+            lineStream >> world;
+            lineStream >> freqW;
             
-            _freMap[tok] = req;
-            _total_frequence += req;
+            size_t freq = std::stoi(freqW);
             
-            for (int i = 1; i < strlen(tok); i++) {
-                std::string subWorld(tok, i);
-                subWorld[i+1] = 0;
+            std::string key(world.begin(), world.end());
+            std::cout << key << " " << freq << std::endl;
+            _freMap[key] = freq;
+            _total_frequence += freq;
+            
+//            -- 主要用了Unicode(UTF-8)编码的原理分隔字符串
+//            -- 简单来说就是每个字符的第一位定义了该字符占据了多少字节
+//            -- UTF-8的编码：它是一种变长的编码方式
+//            -- 对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII码是相同的。
+//            -- 对于n字节的符号（n>1），第一个字节的前n位都设为1，第n+1位设为0，后面字节的前两位一律设为10。
+//            -- 剩下的没有提及的二进制位，全部为这个符号的unicode码。
+            for (int i = 0; i < world.size();) {
+                size_t shift = 1;
+                wchar_t c = world[i];
+                if (c > 0 && c <= 127) {
+                    shift = 1;
+                } else if (c >= 192 && c <= 223) {
+                    shift = 2;
+                } else if (c >= 224 && c <= 239) {
+                    shift = 3;
+                } else if (c >=240 && c <= 247) {
+                    shift = 4;
+                }
+                
+                std::string subWorld(key, 0, i + shift);
                 if (_freMap.find(subWorld) == _freMap.end()) {
                     _freMap[subWorld] = 0;
                     
-                    std::cout << subWorld << " 0" << std::endl; // unicode code miss !!!
+                    std::cout << subWorld << " 0" << std::endl;
                 }
+                
+                i += shift;
             }
         }
-        fs.close();
+        wfs.close();
         _initialized = true;
     }
 };
@@ -48,7 +69,7 @@ void Tocken::loadPreFrequenceDict(std::string path) {
 bool Tocken::check_initialized()
 {
     if (!_initialized) {
-        loadPreFrequenceDict("source/test.txt");
+        loadPreFrequenceDict("source/dict.txt");
     }
     return _initialized;
 }

@@ -7,14 +7,16 @@
 
 #include <iostream>
 #include "tocken.hpp"
+#include "utils.hpp"
 
 int main(int argc, const char * argv[]) {    
     Tocken tocken;
-    std::vector<std::wstring> res = tocken._cut_DAG_NO_HMM(L"今天恭喜发送财红包拿来");
     
+    std::vector<std::wstring> res = tocken._cut_DAG_NO_HMM(L"今天恭喜发送财红包拿来");
+
     std::cout << "result: " << std::endl;
     for (auto w : res) {
-        std::wcout << w << " ";
+        std::cout << utils::ws2s(w) << " ";
     }
     std::cout << std::endl;
     

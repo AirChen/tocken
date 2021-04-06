@@ -9,61 +9,38 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-
-//            -- 主要用了Unicode(UTF-8)编码的原理分隔字符串
-//            -- 简单来说就是每个字符的第一位定义了该字符占据了多少字节
-//            -- UTF-8的编码：它是一种变长的编码方式
-//            -- 对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII码是相同的。
-//            -- 对于n字节的符号（n>1），第一个字节的前n位都设为1，第n+1位设为0，后面字节的前两位一律设为10。
-//            -- 剩下的没有提及的二进制位，全部为这个符号的unicode码。
-static inline size_t get_wchar_shift(std::wstring world, size_t idx) {
-    size_t shift = 1;
-    wchar_t c = world[idx];
-    if (c > 0 && c <= 127) {
-        shift = 1;
-    } else if (c >= 192 && c <= 223) {
-        shift = 2;
-    } else if (c >= 224 && c <= 239) {
-        shift = 3;
-    } else if (c >=240 && c <= 247) {
-        shift = 4;
-    }
-    return shift;
-}
+#include "utils.hpp"
 
 void Tocken::loadPreFrequenceDict(std::string path) {
-    std::wifstream wfs(path);
+    std::ifstream fs(path);
     _total_frequence = 0;
-    
-    if (wfs.is_open()) {
-        std::wstring line;
-        while(std::getline(wfs, line))
+
+    if (fs.is_open()) {
+        std::string line;
+        while(std::getline(fs, line))
         {
-            std::wstring world;
-            std::wstring freqW;
-            
-            std::wistringstream lineStream(line);
+            std::string world;
+            std::string freqW;
+
+            std::istringstream lineStream(line);
             lineStream >> world;
             lineStream >> freqW;
-            
+
             size_t freq = std::stoi(freqW);
-            std::wcout << world << " " << freq << std::endl;
-            _freMap[world] = freq;
+            std::wstring key = utils::s2ws(world);
+//            std::wcout << key << " " << freq << std::endl;
+            _freMap[key] = freq;
             _total_frequence += freq;
-            
-            for (int i = 0; i < world.size();) {
-                size_t shift = get_wchar_shift(world, i);
-                std::wstring subWorld(world, 0, i + shift);
+
+            for (int i = 0; i < key.size(); i++) {
+                std::wstring subWorld(key, 0, i+1);
                 if (_freMap.find(subWorld) == _freMap.end()) {
                     _freMap[subWorld] = 0;
-                    
-                    std::wcout << subWorld << " 0" << std::endl;
+//                    std::wcout << subWorld << " 0" << std::endl;
                 }
-                
-                i += shift;
             }
         }
-        wfs.close();
+        fs.close();
         _initialized = true;
     }
 };
@@ -81,15 +58,14 @@ void Tocken::get_DAG(std::wstring sentence)
     if (check_initialized()) {
         for (int i = 0; i < sentence.size(); i++) {
             std::vector<size_t> endList;
-
-            size_t shift = get_wchar_shift(sentence, i);
-            std::wstring tmpKey(sentence, i, shift);
-            size_t k = i + shift;
-            while (k < sentence.size() && _freMap.find(tmpKey) != _freMap.end()) {
+            std::wstring tmpKey(sentence, i, 1);
+            std::wcout << tmpKey << " +" << std::endl;
+            size_t k = i + 1;
+            while (k <= sentence.size() && _freMap.find(tmpKey) != _freMap.end()) {
                 if (_freMap[tmpKey] > 0) {
                     endList.push_back(k);
                 }
-                k += get_wchar_shift(sentence, k);
+                k++;
                 tmpKey = sentence.substr(i, k - i);
             }
             if (endList.size() == 0) {

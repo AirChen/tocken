@@ -15,17 +15,17 @@
 struct Tocken {
     void loadPreFrequenceDict(std::string path);
     bool check_initialized();
-    void get_DAG(std::string sentence);
+    void get_DAG(std::wstring sentence);
     
-    std::vector<std::string> _cut_DAG_NO_HMM(std::string sentence);
+    std::vector<std::wstring> _cut_DAG_NO_HMM(std::wstring sentence);
     
     Tocken() { _initialized = false; };
     ~Tocken() {};
     
 private:
     size_t _total_frequence;
-    std::map<std::string, size_t> _freMap;
-    std::map<size_t, std::vector<int>> _DAG;
+    std::map<std::wstring, size_t> _freMap;
+    std::map<size_t, std::vector<size_t>> _DAG;
     std::map<size_t, std::pair<double, size_t>> _route;
     
     bool _initialized;

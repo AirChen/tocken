@@ -28,7 +28,6 @@ void Tocken::loadPreFrequenceDict(std::string path) {
 
             size_t freq = std::stoi(freqW);
             std::wstring key = utils::s2ws(world);
-//            std::wcout << key << " " << freq << std::endl;
             _freMap[key] = freq;
             _total_frequence += freq;
 
@@ -36,7 +35,6 @@ void Tocken::loadPreFrequenceDict(std::string path) {
                 std::wstring subWorld(key, 0, i+1);
                 if (_freMap.find(subWorld) == _freMap.end()) {
                     _freMap[subWorld] = 0;
-//                    std::wcout << subWorld << " 0" << std::endl;
                 }
             }
         }
@@ -58,15 +56,14 @@ void Tocken::get_DAG(std::wstring sentence)
     if (check_initialized()) {
         for (int i = 0; i < sentence.size(); i++) {
             std::vector<size_t> endList;
+            size_t k = i;
             std::wstring tmpKey(sentence, i, 1);
-            std::wcout << tmpKey << " +" << std::endl;
-            size_t k = i + 1;
             while (k <= sentence.size() && _freMap.find(tmpKey) != _freMap.end()) {
                 if (_freMap[tmpKey] > 0) {
                     endList.push_back(k);
                 }
                 k++;
-                tmpKey = sentence.substr(i, k - i);
+                tmpKey = sentence.substr(i, k + 1 - i);
             }
             if (endList.size() == 0) {
                 endList.push_back(i);

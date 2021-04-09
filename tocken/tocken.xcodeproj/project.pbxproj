@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		079F5163261C566A00534968 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 079F5161261C566A00534968 /* utils.cpp */; };
+		07A2E3F826201F8C0069228D /* libworkflow.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A2E3F726201F7D0069228D /* libworkflow.a */; };
+		07A2E40F262022FB0069228D /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A2E40E262022EE0069228D /* libcrypto.a */; };
+		07A2E410262022FB0069228D /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A2E40D262022EE0069228D /* libssl.a */; };
 		7F32011226108EF4003DD586 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F32011126108EF4003DD586 /* main.cpp */; };
 		7F32011B26109224003DD586 /* tocken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F32011926109224003DD586 /* tocken.cpp */; };
 /* End PBXBuildFile section */
@@ -27,6 +30,9 @@
 /* Begin PBXFileReference section */
 		079F5161261C566A00534968 /* utils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utils.cpp; sourceTree = "<group>"; };
 		079F5162261C566A00534968 /* utils.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = utils.hpp; sourceTree = "<group>"; };
+		07A2E3F726201F7D0069228D /* libworkflow.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libworkflow.a; path = 3rd_part/libworkflow.a; sourceTree = "<group>"; };
+		07A2E40D262022EE0069228D /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_part/libssl.a; sourceTree = "<group>"; };
+		07A2E40E262022EE0069228D /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_part/libcrypto.a; sourceTree = "<group>"; };
 		7F32010E26108EF4003DD586 /* tocken */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tocken; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F32011126108EF4003DD586 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		7F32011926109224003DD586 /* tocken.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tocken.cpp; sourceTree = "<group>"; };
@@ -39,17 +45,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07A2E40F262022FB0069228D /* libcrypto.a in Frameworks */,
+				07A2E3F826201F8C0069228D /* libworkflow.a in Frameworks */,
+				07A2E410262022FB0069228D /* libssl.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		07A2E3F626201F7D0069228D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				07A2E40E262022EE0069228D /* libcrypto.a */,
+				07A2E40D262022EE0069228D /* libssl.a */,
+				07A2E3F726201F7D0069228D /* libworkflow.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7F32010526108EF4003DD586 = {
 			isa = PBXGroup;
 			children = (
 				7F32011026108EF4003DD586 /* tocken */,
 				7F32010F26108EF4003DD586 /* Products */,
+				07A2E3F626201F7D0069228D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -254,6 +274,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/3rd_part";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/3rd_part",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -262,6 +287,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/3rd_part";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/3rd_part",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

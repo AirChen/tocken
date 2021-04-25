@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		079F5163261C566A00534968 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 079F5161261C566A00534968 /* utils.cpp */; };
+		07D939B726329D7900D669C6 /* hash_table.c in Sources */ = {isa = PBXBuildFile; fileRef = 07D939B626329D7900D669C6 /* hash_table.c */; };
+		07D939BB26329D8700D669C6 /* prime.c in Sources */ = {isa = PBXBuildFile; fileRef = 07D939BA26329D8700D669C6 /* prime.c */; };
 		7F32011226108EF4003DD586 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F32011126108EF4003DD586 /* main.cpp */; };
 		7F32011B26109224003DD586 /* tocken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F32011926109224003DD586 /* tocken.cpp */; };
 /* End PBXBuildFile section */
@@ -27,6 +29,10 @@
 /* Begin PBXFileReference section */
 		079F5161261C566A00534968 /* utils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utils.cpp; sourceTree = "<group>"; };
 		079F5162261C566A00534968 /* utils.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = utils.hpp; sourceTree = "<group>"; };
+		07D939B526329D7900D669C6 /* hash_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hash_table.h; sourceTree = "<group>"; };
+		07D939B626329D7900D669C6 /* hash_table.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hash_table.c; sourceTree = "<group>"; };
+		07D939B926329D8700D669C6 /* prime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prime.h; sourceTree = "<group>"; };
+		07D939BA26329D8700D669C6 /* prime.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = prime.c; sourceTree = "<group>"; };
 		7F32010E26108EF4003DD586 /* tocken */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tocken; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F32011126108EF4003DD586 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		7F32011926109224003DD586 /* tocken.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tocken.cpp; sourceTree = "<group>"; };
@@ -65,6 +71,10 @@
 			isa = PBXGroup;
 			children = (
 				7F32011126108EF4003DD586 /* main.cpp */,
+				07D939B526329D7900D669C6 /* hash_table.h */,
+				07D939B626329D7900D669C6 /* hash_table.c */,
+				07D939B926329D8700D669C6 /* prime.h */,
+				07D939BA26329D8700D669C6 /* prime.c */,
 				7F32011A26109224003DD586 /* tocken.hpp */,
 				7F32011926109224003DD586 /* tocken.cpp */,
 				079F5162261C566A00534968 /* utils.hpp */,
@@ -130,7 +140,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07D939B726329D7900D669C6 /* hash_table.c in Sources */,
 				079F5163261C566A00534968 /* utils.cpp in Sources */,
+				07D939BB26329D8700D669C6 /* prime.c in Sources */,
 				7F32011226108EF4003DD586 /* main.cpp in Sources */,
 				7F32011B26109224003DD586 /* tocken.cpp in Sources */,
 			);

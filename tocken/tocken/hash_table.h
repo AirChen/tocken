@@ -4,6 +4,7 @@
 //
 //  Created by tuRen on 2021/4/23.
 //  https://github.com/jamesroutley/write-a-hash-table/tree/master/07-appendix demo
+// https://github.com/jamesroutley/algorithms-and-data-structures/tree/master/hash-table
 
 #ifndef hash_table_h
 #define hash_table_h

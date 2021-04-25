@@ -11,10 +11,14 @@
 #include "hash_table.h"
 #include "prime.h"
 
-#define HT_PRIME_1 3
-#define HT_PRIME_2 4
 #define HT_INITIAL_BASE_SIZE 50
+
+// HT_DELETED_ITEM is used to mark a bucket containing a deleted item
 static ht_item HT_DELETED_ITEM = {NULL, NULL};
+
+// HT_PRIMEs are parameters in the hashing algorithm
+static const int HT_PRIME_1 = 151;
+static const int HT_PRIME_2 = 163;
 
 static ht_item* ht_new_item(const char* k, const char* v) {
     ht_item* i = malloc(sizeof(ht_item));

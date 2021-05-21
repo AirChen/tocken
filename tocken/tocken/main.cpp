@@ -8,20 +8,14 @@
 #include <iostream>
 #include "tocken.hpp"
 #include "utils.hpp"
-#include "hmmtocken.hpp"
 
-int main(int argc, const char * argv[]) {    
-//    Tocken tocken;
-//    std::vector<std::wstring> res = tocken._cut_DAG_NO_HMM(L"今天恭喜发送财红包拿来");
-//    std::cout << "result: " << std::endl;
-//    for (auto w : res) {
-//        std::cout << utils::ws2s(w) << " ";
-//    }
-//    std::cout << std::endl;
-    
-    for (auto tok : HMM::cut(L"永和服装饰品有限公司")) {
-        if (tok.size() > 0) {
-            std::cout << utils::ws2s(tok) << " ";
+int main(int argc, const char * argv[]) {
+    auto token = Token::instance();
+    std::vector<std::wstring> res = token->cut(L"这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。");
+    std::cout << "result: " << std::endl;
+    for (auto w : res) {
+        if (w.size() > 0) {            
+            std::cout << utils::ws2s(w) << " ";
         }
     }
     std::cout << std::endl;

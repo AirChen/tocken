@@ -35,7 +35,7 @@ static void viterbi(wstring sentence, double& prob, string& problist) {
     map<char, string> path;
     for (auto y : states) {
         auto itr = emit_p[y].find(sentence[0]);
-        double em_p = (itr == emit_p[y].end() ? DOUBLE_MIN : (*itr).second);
+        double em_p = ((itr == emit_p[y].end()) ? DOUBLE_MIN : (*itr).second);
         V[0][y] = begin_p[y] + em_p;
         path[y].push_back(y);
     }
@@ -44,13 +44,13 @@ static void viterbi(wstring sentence, double& prob, string& problist) {
         map<char, string> tmpPath;
         for (auto y : states) {
             auto itr = emit_p[y].find(sentence[i]);
-            double em_p = (itr == emit_p[y].end() ? DOUBLE_MIN : (*itr).second);
+            double em_p = ((itr == emit_p[y].end()) ? DOUBLE_MIN : (*itr).second);
             
             double maxProb = DOUBLE_MIN;
             char maxPreState = _PrevStatus[y][0];
             for (auto pre : _PrevStatus[y]) {
-                auto itr0 = trans_p[pre].find(pre);
-                double ts_p = (itr0 == trans_p[pre].end() ? DOUBLE_MIN : (*itr0).second);
+                auto itr0 = trans_p[pre].find(y);
+                double ts_p = ((itr0 == trans_p[pre].end()) ? DOUBLE_MIN : (*itr0).second);
                 
                 double prob = V[i-1][pre] + ts_p + em_p;
                 if (prob > maxProb) {

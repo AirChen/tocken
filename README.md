@@ -1,4 +1,4 @@
-# tocken
+# token
 
 Chinese token demo, reference [jieba repo](https://github.com/fxsjy/jieba).
 

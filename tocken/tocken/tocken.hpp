@@ -9,7 +9,7 @@
 #define tocken_hpp
 
 #include <stdio.h>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <string>
 
@@ -35,9 +35,9 @@ class TokenImp: public Token {
     vector<wstring> _cut_DAG(wstring sentence);
     
     size_t _total_frequence;
-    std::map<wstring, size_t> _freMap;
-    std::map<size_t, std::vector<size_t>> _DAG;
-    std::map<size_t, std::pair<double, size_t>> _route;
+    std::unordered_map<wstring, size_t> _freMap;
+    std::unordered_map<size_t, std::vector<size_t>> _DAG;
+    std::unordered_map<size_t, std::pair<double, size_t>> _route;
     
     bool _initialized;
     

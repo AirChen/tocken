@@ -9,31 +9,32 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <regex>
 #include "hmmtocken.hpp"
 #include "utils.hpp"
 
-void TokenImp::loadPreFrequenceDict(std::string path) {
+void TokenImp::loadPreFrequenceDict(string path) {
     std::ifstream fs(path);
     _total_frequence = 0;
 
     if (fs.is_open()) {
-        std::string line;
+        string line;
         while(std::getline(fs, line))
         {
-            std::string world;
-            std::string freqW;
+            string world;
+            string freqW;
 
             std::istringstream lineStream(line);
             lineStream >> world;
             lineStream >> freqW;
 
             size_t freq = std::stoi(freqW);
-            std::wstring key = utils::s2ws(world);
+            wstring key = utils::s2ws(world);
             _freMap[key] = freq;
             _total_frequence += freq;
 
             for (int i = 0; i < key.size(); i++) {
-                std::wstring subWorld(key, 0, i+1);
+                wstring subWorld(key, 0, i+1);
                 if (_freMap.find(subWorld) == _freMap.end()) {
                     _freMap[subWorld] = 0;
                 }
@@ -52,13 +53,13 @@ bool TokenImp::check_initialized()
     return _initialized;
 }
 
-void TokenImp::get_DAG(std::wstring sentence)
+void TokenImp::get_DAG(wstring sentence)
 {
     if (check_initialized()) {
         for (int i = 0; i < sentence.size(); i++) {
-            std::vector<size_t> endList;
+            vector<size_t> endList;
             size_t k = i;
-            std::wstring tmpKey(sentence, i, 1);
+            wstring tmpKey(sentence, i, 1);
             while (k <= sentence.size() && _freMap.find(tmpKey) != _freMap.end()) {
                 if (_freMap[tmpKey] > 0) {
                     endList.push_back(k);
@@ -85,7 +86,7 @@ vector<wstring> TokenImp::_cut_DAG(wstring sentence)
     for (int i = N-1; i > -1; i--) {
         double maxLog = -100000;
         size_t maxIdx = -1;
-        for (std::vector<size_t>::iterator itr = _DAG[i].begin(); itr != _DAG[i].end(); itr++) {
+        for (vector<size_t>::iterator itr = _DAG[i].begin(); itr != _DAG[i].end(); itr++) {
             double tmpLog = log(std::max((double)_freMap[sentence.substr(i, (*itr + 1 - i))], 1.0)) - logTotal + _route[*itr + 1].first;
             size_t tmpIdx = *itr;
             
@@ -98,8 +99,8 @@ vector<wstring> TokenImp::_cut_DAG(wstring sentence)
     }
     
     size_t x = 0;
-    std::wstring buf = L"";
-    std::vector<std::wstring> tocken;
+    wstring buf = L"";
+    vector<wstring> tocken;
     
     auto generate = [&](){
         if (buf.size() == 1) {
@@ -119,7 +120,7 @@ vector<wstring> TokenImp::_cut_DAG(wstring sentence)
     
     while (x < N) {
         size_t y = _route[x].second + 1;
-        std::wstring subWord = sentence.substr(x, y-x);
+        wstring subWord = sentence.substr(x, y-x);
         if (subWord.size() == 1) {
             buf += subWord;
         } else {
@@ -139,7 +140,7 @@ vector<wstring> TokenImp::_cut_DAG(wstring sentence)
     return tocken;
 }
 
-std::vector<std::wstring> TokenImp::_cut_DAG_NO_HMM(std::wstring sentence)
+vector<wstring> TokenImp::_cut_DAG_NO_HMM(wstring sentence)
 {
     get_DAG(sentence);
     
@@ -150,7 +151,7 @@ std::vector<std::wstring> TokenImp::_cut_DAG_NO_HMM(std::wstring sentence)
     for (int i = N-1; i > -1; i--) {
         double maxLog = -100000;
         size_t maxIdx = -1;
-        for (std::vector<size_t>::iterator itr = _DAG[i].begin(); itr != _DAG[i].end(); itr++) {
+        for (vector<size_t>::iterator itr = _DAG[i].begin(); itr != _DAG[i].end(); itr++) {
             double tmpLog = log(std::max((double)_freMap[sentence.substr(i, (*itr + 1 - i))], 1.0)) - logTotal + _route[*itr + 1].first;
             size_t tmpIdx = *itr;
             
@@ -163,16 +164,20 @@ std::vector<std::wstring> TokenImp::_cut_DAG_NO_HMM(std::wstring sentence)
     }
     
     size_t x = 0;
-    std::wstring buf = L"";
-    std::vector<std::wstring> tocken;
+    wstring buf = L"";
+    vector<wstring> tocken;
+    std::wregex reg(L"([a-zA-Z0-9]+(?:\.\d+)?%?)");
+    std::wsmatch sm;
+    
     while (x < N) {
         size_t y = _route[x].second + 1;
-        std::wstring subWord = sentence.substr(x, y-x);
-        if (subWord.size() == 1 &&
-            ((subWord[0] >= 'a' && subWord[0] <= 'z')
-             || (subWord[0] >= 'A' && subWord[0] <= 'Z')
-             || (subWord[0] >= '0' && subWord[0] <= '9'))) {
-            buf += subWord;
+        wstring subWord = sentence.substr(x, y-x);
+        if (subWord.size() == 1 && std::regex_match(subWord.cbegin(), subWord.cend(), sm, reg)) {
+            if (sm.size() == 2) {
+                buf += subWord;
+            } else {
+                printf("error: matched faild.\n");
+            }
         } else {
             if (buf.size() > 0) {
                 tocken.push_back(buf);

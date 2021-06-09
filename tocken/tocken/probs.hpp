@@ -8,12 +8,12 @@
 #ifndef probs_hpp
 #define probs_hpp
 
-#include <map>
+#include <unordered_map>
 
-using std::map;
+using std::unordered_map;
 
-extern map<char, double> begin_p;
-extern map<char, map<char, double>> trans_p;
-extern map<char, map<wchar_t, double>> emit_p;
+extern unordered_map<char, double> begin_p;
+extern unordered_map<char, unordered_map<char, double>> trans_p;
+extern unordered_map<char, unordered_map<wchar_t, double>> emit_p;
 
 #endif /* probs_hpp */

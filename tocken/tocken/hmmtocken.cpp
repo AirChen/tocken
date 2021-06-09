@@ -13,12 +13,12 @@
 
 #define DOUBLE_MIN -3.14e100
 
-extern map<char, double> begin_p;
-extern map<char, map<char, double>> trans_p;
-extern map<char, map<wchar_t, double>> emit_p;
+extern unordered_map<char, double> begin_p;
+extern unordered_map<char, unordered_map<char, double>> trans_p;
+extern unordered_map<char, unordered_map<wchar_t, double>> emit_p;
 
 using std::string;
-static map<char, string> _PrevStatus = {
+static unordered_map<char, string> _PrevStatus = {
     {'B', "ES"},
     {'M', "MB"},
     {'S', "SE"},
@@ -29,10 +29,9 @@ static vector<wstring> _Force_Split_Words;
 
 static void viterbi(wstring sentence, double& prob, string& problist) {
     string states("BMES");
+    unordered_map<int, unordered_map<char, double>> V;
+    unordered_map<char, string> path;
     
-    map<int, map<char, double>> V;
-    
-    map<char, string> path;
     for (auto y : states) {
         auto itr = emit_p[y].find(sentence[0]);
         double em_p = ((itr == emit_p[y].end()) ? DOUBLE_MIN : (*itr).second);
@@ -41,7 +40,7 @@ static void viterbi(wstring sentence, double& prob, string& problist) {
     }
     
     for (int i = 1; i < sentence.size(); i++) {
-        map<char, string> tmpPath;
+        unordered_map<char, string> tmpPath;
         for (auto y : states) {
             auto itr = emit_p[y].find(sentence[i]);
             double em_p = ((itr == emit_p[y].end()) ? DOUBLE_MIN : (*itr).second);
@@ -156,13 +155,12 @@ vector<wstring> HMM::cut(wstring sentence) {
     return ans;
 }
 
-vector<wstring> HMM::_segHan(wstring sentence) {
-    std::wregex reg(L"([\u4E00-\u9FD5]+)");
-    
-    vector<wstring> v(std::wsregex_token_iterator(sentence.begin(), sentence.end(), reg, -1), std::wsregex_token_iterator());
+using std::wregex;
+vector<wstring> _wsegRegex(wstring& sentence, wregex& regex) {
+    vector<wstring> v(std::wsregex_token_iterator(sentence.begin(), sentence.end(), regex, -1), std::wsregex_token_iterator());
     std::wsmatch sm;
     wstring::const_iterator itr = sentence.cbegin();
-    while (std::regex_search(itr, sentence.cend(), sm, reg)) {
+    while (std::regex_search(itr, sentence.cend(), sm, regex)) {
         itr = sm[0].second;
                 
         if (sm.size() == 2) {
@@ -174,22 +172,14 @@ vector<wstring> HMM::_segHan(wstring sentence) {
     return v;
 }
 
+vector<wstring> HMM::_segHan(wstring sentence) {
+    std::wregex reg(L"([\u4E00-\u9FD5]+)");
+    return _wsegRegex(sentence, reg);
+}
+
 vector<wstring> HMM::_segSig(wstring sentence) {
     std::wregex reg(L"([a-zA-Z0-9]+(?:\.\d+)?%?)");
-    
-    vector<wstring> v(std::wsregex_token_iterator(sentence.begin(), sentence.end(), reg, -1), std::wsregex_token_iterator());
-    std::wsmatch sm;
-    wstring::const_iterator itr = sentence.cbegin();
-    while (std::regex_search(itr, sentence.cend(), sm, reg)) {
-        itr = sm[0].second;
-                
-        if (sm.size() == 2) {
-            wstring s1 = sm[0].str();
-            v.push_back(s1);
-        }
-    }
-    
-    return v;
+    return _wsegRegex(sentence, reg);
 }
 
 void HMM::add_force_splite(wstring splite) {

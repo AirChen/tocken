@@ -7,21 +7,21 @@
 
 #include "probs.hpp"
 
-map<char, double> begin_p = {
+unordered_map<char, double> begin_p = {
     {'B', -0.26268660809250016},
     {'E', -3.14e+100},
     {'M', -3.14e+100},
     {'S', -1.4652633398537678}
 };
 
-map<char, map<char, double>> trans_p = {
+unordered_map<char, unordered_map<char, double>> trans_p = {
     {'B', {{'E', -0.510825623765990}, {'M', -0.916290731874155}}},
     {'E', {{'B', -0.5897149736854513}, {'S', -0.8085250474669937}}},
     {'M', {{'E', -0.33344856811948514}, {'M', -1.2603623820268226}}},
     {'S', {{'B', -0.7211965654669841}, {'S', -0.6658631448798212}}}
 };
 
-map<char, map<wchar_t, double>> emit_p = {
+unordered_map<char, unordered_map<wchar_t, double>> emit_p = {
     {'B', {
     {L'\u4e00', -3.6544978750449433},
     {L'\u4e01', -8.125041941842026},

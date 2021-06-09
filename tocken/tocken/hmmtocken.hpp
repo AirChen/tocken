@@ -11,11 +11,9 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include <map>
 
 using std::wstring;
 using std::vector;
-using std::map;
 
 class HMM {
     static vector<wstring> _cut(wstring sentence);

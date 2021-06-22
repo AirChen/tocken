@@ -10,39 +10,61 @@
 #include <sstream>
 #include <iostream>
 #include <regex>
+#include <locale>
+#include <codecvt>
 #include "hmmtocken.hpp"
-#include "utils.hpp"
 
 void TokenImp::loadPreFrequenceDict(string path) {
-    std::ifstream fs(path);
     _total_frequence = 0;
+    FILE *ft = fopen(path.c_str(), "rb");
+    if (ft == NULL) {
+        printf("Input file not found\n");
+        return;
+    }
+    
+    using convert_typeX = std::codecvt_utf8<wchar_t>;
+    std::wstring_convert<convert_typeX, wchar_t> converterX;
+    
+    char * line = NULL;
+    size_t len = 0;
+    
+    while(getline(&line, &len, ft) != -1) {
+        string key;
+        string freqs;
+        
+        const char s[2] = " ";
+        char *token;
+        token = strtok(line, s);
+        while(token != NULL) {
+            if (key.empty()) {
+                key.insert(0, token);
+            } else if (freqs.empty()) {
+                freqs.insert(0, token);
+            } else if(!key.empty() && !freqs.empty()) {
+                break;
+            }
+        
+            token = strtok(NULL, s);
+        }
+        
+        wstring keyW = converterX.from_bytes(key);
+        size_t freq = std::stoi(freqs);
+        _freMap[keyW] = freq;
+        _total_frequence += freq;
 
-    if (fs.is_open()) {
-        string line;
-        while(std::getline(fs, line))
-        {
-            string world;
-            string freqW;
-
-            std::istringstream lineStream(line);
-            lineStream >> world;
-            lineStream >> freqW;
-
-            size_t freq = std::stoi(freqW);
-            wstring key = utils::s2ws(world);
-            _freMap[key] = freq;
-            _total_frequence += freq;
-
-            for (int i = 0; i < key.size(); i++) {
-                wstring subWorld(key, 0, i+1);
-                if (_freMap.find(subWorld) == _freMap.end()) {
-                    _freMap[subWorld] = 0;
-                }
+        for (int i = 0; i < keyW.size(); i++) {
+            wstring subWorld(keyW, 0, i+1);
+            if (_freMap.find(subWorld) == _freMap.end()) {
+                _freMap[subWorld] = 0;
             }
         }
-        fs.close();
-        _initialized = true;
     }
+    
+    if (line != NULL) {
+        free(line);
+    }
+    fclose(ft);
+    _initialized = true;
 };
 
 bool TokenImp::check_initialized()

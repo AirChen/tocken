@@ -45,7 +45,6 @@ class TokenImp: public Token {
 public:
     virtual vector<wstring> cut(wstring sentence, bool useHMM);
     
-    using Token::Token;
     TokenImp(): _initialized(false) {};
     ~TokenImp() {};
 };

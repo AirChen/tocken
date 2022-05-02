@@ -1,7 +1,13 @@
-FLAG = -Wc++11-extensions -std=c++11
+sources := $(shell ls)
+includes := $(filter %.hpp, $(sources))
+cpps := $(filter %.cpp, $(sources))
 
-sources = main.cpp tocken.cpp hmmtocken.cpp probs.cpp utils.cpp
+os := $(subst .cpp,.o, $(cpps))
 
-program: $(sources)
-	g++ -g $(FLAG) -O2 -o program $(sources)
+FLAG = -Wc++11-extensions -Wno-unknown-escape-sequence -std=c++11
 
+tocken: $(os)
+	$(CXX) $? -o $@
+
+%.o: %.cpp
+	$(CXX) $(FLAG) -c $? -o $@

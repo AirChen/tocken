@@ -14,38 +14,42 @@
 #include <codecvt>
 #include "hmmtocken.hpp"
 
-void TokenImp::loadPreFrequenceDict(string path) {
-    _total_frequence = 0;
-    FILE *ft = fopen(path.c_str(), "rb");
-    if (ft == NULL) {
-        printf("Input file not found\n");
-        return;
+void split(const string& str, vector<string>& res, char ch) {
+    char chs[512];
+    strcpy(chs, str.c_str());
+    char* token;
+    char s[2] = " ";
+    s[0] = ch;
+
+    token = strtok(chs, s);
+    while (token != NULL) {
+        std::string tokStr{ token };
+        res.emplace_back(tokStr);
+
+        token = strtok(NULL, s);
     }
-    
+}
+
+bool TokenImp::readFile(const char* fname) {
+    std::ifstream ifsr(fname);
+    if (!ifsr.is_open()) {
+        std::cout << "Err in open file: " << fname << std::endl;
+        return false;
+    }
+
     using convert_typeX = std::codecvt_utf8<wchar_t>;
     std::wstring_convert<convert_typeX, wchar_t> converterX;
+    _total_frequence = 0;
     
-    char * line = NULL;
-    size_t len = 0;
-    
-    while(getline(&line, &len, ft) != -1) {
-        string key;
-        string freqs;
-        
-        const char s[2] = " ";
-        char *token;
-        token = strtok(line, s);
-        while(token != NULL) {
-            if (key.empty()) {
-                key.insert(0, token);
-            } else if (freqs.empty()) {
-                freqs.insert(0, token);
-            } else if(!key.empty() && !freqs.empty()) {
-                break;
-            }
-        
-            token = strtok(NULL, s);
+    std::string line;
+    while (std::getline(ifsr, line)) {
+        vector<string> toks;
+        split(line, toks, ' ');
+        if (toks.size() < 2) {
+            continue;
         }
+        string key = toks[0];
+        string freqs = toks[1];
         
         wstring keyW = converterX.from_bytes(key);
         size_t freq = std::stoi(freqs);
@@ -58,42 +62,30 @@ void TokenImp::loadPreFrequenceDict(string path) {
                 _freMap[subWorld] = 0;
             }
         }
-    }
-    
-    if (line != NULL) {
-        free(line);
-    }
-    fclose(ft);
-    _initialized = true;
-};
 
-bool TokenImp::check_initialized()
-{
-    if (!_initialized) {
-        loadPreFrequenceDict("source/dict.txt");
     }
-    return _initialized;
+    ifsr.close();
+
+    return true;
 }
 
 void TokenImp::get_DAG(wstring sentence)
 {
-    if (check_initialized()) {
-        for (int i = 0; i < sentence.size(); i++) {
-            vector<size_t> endList;
-            size_t k = i;
-            wstring tmpKey(sentence, i, 1);
-            while (k <= sentence.size() && _freMap.find(tmpKey) != _freMap.end()) {
-                if (_freMap[tmpKey] > 0) {
-                    endList.push_back(k);
-                }
-                k++;
-                tmpKey = sentence.substr(i, k + 1 - i);
+    for (int i = 0; i < sentence.size(); i++) {
+        vector<size_t> endList;
+        size_t k = i;
+        wstring tmpKey(sentence, i, 1);
+        while (k <= sentence.size() && _freMap.find(tmpKey) != _freMap.end()) {
+            if (_freMap[tmpKey] > 0) {
+                endList.push_back(k);
             }
-            if (endList.size() == 0) {
-                endList.push_back(i);
-            }
-            _DAG[i] = endList;
+            k++;
+            tmpKey = sentence.substr(i, k + 1 - i);
         }
+        if (endList.size() == 0) {
+            endList.push_back(i);
+        }
+        _DAG[i] = endList;
     }
 }
 
@@ -217,7 +209,3 @@ vector<wstring> TokenImp::cut(wstring sentence, bool useHMM) {
     return useHMM ? _cut_DAG(sentence) : _cut_DAG_NO_HMM(sentence);
 }
 
-unique_ptr<Token> Token::instance() {
-    unique_ptr<Token> ptr((new TokenImp()));
-    return ptr;
-}

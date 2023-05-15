@@ -21,15 +21,14 @@ using std::unordered_map;
 
 class Token {
 public:
-    virtual vector<wstring> cut(wstring sentence, bool useHMM = true) = 0;
-    
-    static unique_ptr<Token> instance();
-    virtual ~Token() {};
+    Token() {}
+    virtual ~Token() {}
+
+    virtual vector<wstring> cut(wstring sentence, bool useHMM = false) = 0;
+    virtual bool readFile(const char* fname) = 0;
 };
 
 class TokenImp: public Token {
-    void loadPreFrequenceDict(string path);
-    bool check_initialized();
     void get_DAG(wstring sentence);
     
     vector<wstring> _cut_DAG_NO_HMM(wstring sentence);
@@ -40,13 +39,12 @@ class TokenImp: public Token {
     unordered_map<size_t, std::vector<size_t>> _DAG;
     unordered_map<size_t, std::pair<double, size_t>> _route;
     
-    bool _initialized;
-    
 public:
-    virtual vector<wstring> cut(wstring sentence, bool useHMM);
+    TokenImp() {}
+    ~TokenImp() {}
     
-    TokenImp(): _initialized(false) {};
-    ~TokenImp() {};
+    virtual vector<wstring> cut(wstring sentence, bool useHMM) override;
+    virtual bool readFile(const char* fname) override;
 };
 
 #endif /* tocken_hpp */

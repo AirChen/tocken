@@ -5,8 +5,8 @@
 //  Created by tuRen on 2021/5/20.
 //
 
-#include "hmmtocken.hpp"
-#include "probs.hpp"
+#include "../include/hmmtocken.hpp"
+#include "../include/probs.hpp"
 #include <float.h>
 #include <regex>
 #include <iostream>

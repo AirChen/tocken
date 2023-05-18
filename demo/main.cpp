@@ -6,8 +6,7 @@
 //
 
 #include <iostream>
-#include "tocken.hpp"
-#include "utils.hpp"
+#include "../include/tocken.hpp"
 #include <chrono>
 using std::chrono::duration_cast; 
 using std::chrono::milliseconds; 

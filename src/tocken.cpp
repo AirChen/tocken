@@ -5,12 +5,12 @@
 //  Created by airChen on 2021/3/28.
 //
 
-#include "tocken.hpp"
+#include "../include/tocken.hpp"
+#include "../include/hmmtocken.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <regex>
-#include "hmmtocken.hpp"
 
 using std::string_view;
 

@@ -1,15 +1,19 @@
 cmake_minimum_required(VERSION 3.5)
 
 SET(PROJ token)
+SET(DEMO token_toy)
 project(${PROJ} VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(COMPILER_FLAGS_RELEASE)
 
-file(GLOB_RECURSE SRC "src/*.c" "src/*.cpp" "src/*.hpp" "src/*.h")
-# add_library(${PROJ} STATIC ${SRC})
-add_executable(${PROJ} ${SRC})
+file(GLOB_RECURSE SRC "src/*.c" "src/*.cpp" "include/*.hpp" "include/*.h")
+add_library(${PROJ} STATIC ${SRC})
+
+file(GLOB_RECURSE DEMO_SRC "demo/*.cpp")
+add_executable(${DEMO} ${DEMO_SRC})
+target_link_libraries(${DEMO} ${PROJ})
 
 ########################################################################################
 # benchmark

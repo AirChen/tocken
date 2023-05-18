@@ -10,18 +10,17 @@
 #include <sstream>
 #include <iostream>
 #include <regex>
-#include <locale>
-#include <codecvt>
 #include "hmmtocken.hpp"
+
+using std::string_view;
 
 void split(const string& str, vector<string>& res, char ch) {
     char chs[512];
     strcpy(chs, str.c_str());
-    char* token;
     char s[2] = " ";
     s[0] = ch;
 
-    token = strtok(chs, s);
+    char* token = strtok(chs, s);
     while (token != NULL) {
         std::string tokStr{ token };
         res.emplace_back(tokStr);
@@ -37,8 +36,6 @@ bool TokenImp::readFile(const char* fname) {
         return false;
     }
 
-    using convert_typeX = std::codecvt_utf8<wchar_t>;
-    std::wstring_convert<convert_typeX, wchar_t> converterX;
     _total_frequence = 0;
     
     std::string line;
@@ -51,13 +48,14 @@ bool TokenImp::readFile(const char* fname) {
         string key = toks[0];
         string freqs = toks[1];
         
-        wstring keyW = converterX.from_bytes(key);
         size_t freq = std::stoi(freqs);
-        _freMap[keyW] = freq;
+        _freMap[key] = freq;
         _total_frequence += freq;
 
-        for (int i = 0; i < keyW.size(); i++) {
-            wstring subWorld(keyW, 0, i+1);
+        /* string_view keyView{key}; */
+        size_t len = key.size();
+        for (size_t i = 0; i < len; i++) {
+            string subWorld = key.substr(0, i + 1);
             if (_freMap.find(subWorld) == _freMap.end()) {
                 _freMap[subWorld] = 0;
             }
@@ -69,12 +67,12 @@ bool TokenImp::readFile(const char* fname) {
     return true;
 }
 
-void TokenImp::get_DAG(wstring sentence)
+void TokenImp::get_DAG(string sentence)
 {
     for (int i = 0; i < sentence.size(); i++) {
         vector<size_t> endList;
         size_t k = i;
-        wstring tmpKey(sentence, i, 1);
+        string tmpKey(sentence, i, 1);
         while (k <= sentence.size() && _freMap.find(tmpKey) != _freMap.end()) {
             if (_freMap[tmpKey] > 0) {
                 endList.push_back(k);
@@ -89,7 +87,7 @@ void TokenImp::get_DAG(wstring sentence)
     }
 }
 
-vector<wstring> TokenImp::_cut_DAG(wstring sentence)
+vector<string> TokenImp::_cut_DAG(string sentence)
 {
     get_DAG(sentence);
     
@@ -113,19 +111,18 @@ vector<wstring> TokenImp::_cut_DAG(wstring sentence)
     }
     
     size_t x = 0;
-    wstring buf = L"";
-    vector<wstring> tocken;
+    string buf;
+    vector<string> tocken;
     
     auto generate = [&](){
         if (buf.size() == 1) {
             tocken.push_back(buf);
         } else if (_freMap.find(buf) == _freMap.end()) {
-            vector<wstring> recognized = HMM::cut(buf);
+            vector<string> recognized = HMM::cut(buf);
             tocken.insert(tocken.end(), recognized.begin(), recognized.end());
         } else {
             for (auto c : buf) {
-                wstring str;
-                str.push_back(c);
+                string str{c};
                 
                 tocken.push_back(str);
             }
@@ -134,13 +131,13 @@ vector<wstring> TokenImp::_cut_DAG(wstring sentence)
     
     while (x < N) {
         size_t y = _route[x].second + 1;
-        wstring subWord = sentence.substr(x, y-x);
+        string subWord = sentence.substr(x, y-x);
         if (subWord.size() == 1) {
             buf += subWord;
         } else {
             if (buf.size() > 0) {
                 generate();
-                buf = L"";
+                buf.clear();
             }
             tocken.push_back(subWord);
         }
@@ -154,7 +151,7 @@ vector<wstring> TokenImp::_cut_DAG(wstring sentence)
     return tocken;
 }
 
-vector<wstring> TokenImp::_cut_DAG_NO_HMM(wstring sentence)
+vector<string> TokenImp::_cut_DAG_NO_HMM(string sentence)
 {
     get_DAG(sentence);
     
@@ -178,14 +175,14 @@ vector<wstring> TokenImp::_cut_DAG_NO_HMM(wstring sentence)
     }
     
     size_t x = 0;
-    wstring buf = L"";
-    vector<wstring> tocken;
-    std::wregex reg(L"([a-zA-Z0-9]+(?:\.\d+)?%?)");
-    std::wsmatch sm;
+    string buf;
+    vector<string> tocken;
+    std::regex reg("([a-zA-Z0-9]+(?:\.\d+)?%?)");
+    std::smatch sm;
     
     while (x < N) {
         size_t y = _route[x].second + 1;
-        wstring subWord = sentence.substr(x, y-x);
+        string subWord = sentence.substr(x, y-x);
         if (subWord.size() == 1 && std::regex_match(subWord.cbegin(), subWord.cend(), sm, reg)) {
             if (sm.size() == 2) {
                 buf += subWord;
@@ -195,7 +192,7 @@ vector<wstring> TokenImp::_cut_DAG_NO_HMM(wstring sentence)
         } else {
             if (buf.size() > 0) {
                 tocken.push_back(buf);
-                buf = L"";
+                buf.clear();
             }
             tocken.push_back(subWord);
         }
@@ -205,7 +202,7 @@ vector<wstring> TokenImp::_cut_DAG_NO_HMM(wstring sentence)
     return tocken;
 }
 
-vector<wstring> TokenImp::cut(wstring sentence, bool useHMM) {
+vector<string> TokenImp::cut(string sentence, bool useHMM) {
     return useHMM ? _cut_DAG(sentence) : _cut_DAG_NO_HMM(sentence);
 }
 

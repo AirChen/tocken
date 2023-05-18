@@ -12,16 +12,16 @@
 #include <string>
 #include <vector>
 
-using std::wstring;
+using std::string;
 using std::vector;
 
 class HMM {
-    static vector<wstring> _cut(wstring sentence);
-    static vector<wstring> _segHan(wstring sentence);
-    static vector<wstring> _segSig(wstring sentence);
+    static vector<string> _cut(string sentence);
+    static vector<string> _segHan(string sentence);
+    static vector<string> _segSig(string sentence);
 public:
-    static vector<wstring> cut(wstring sentence);
-    static void add_force_splite(wstring splite);
+    static vector<string> cut(string sentence);
+    static void add_force_splite(string splite);
         
 };
 

@@ -8,22 +8,22 @@
 #include <iostream>
 #include "tocken.hpp"
 #include "utils.hpp"
-#include <locale>
-#include <codecvt>
 #include <chrono>
 using std::chrono::duration_cast; 
 using std::chrono::milliseconds; 
 using std::chrono::system_clock;
 
 int main(int argc, const char * argv[]) {
-    if (argc < 2) {
-        std::cout << "cli exp: ./token fname" << std::endl;
+    if (argc < 3) {
+        std::cout << "cli exp: ./token fname useHMM" << std::endl;
         return -1;
     }
     const char* fname = argv[1];
-    
-    using convert_typeX = std::codecvt_utf8<wchar_t>;
-    std::wstring_convert<convert_typeX, wchar_t> converterX;
+    const char* useHMM = argv[2];
+    bool isUseHMM = false;
+    if (strcmp(useHMM, "use") == 0) {
+        isUseHMM = true;
+    }
     
     auto t0 = system_clock::now();
     unique_ptr<Token> token = std::make_unique<TokenImp>();
@@ -39,12 +39,11 @@ int main(int argc, const char * argv[]) {
             scanf("%s", cliStr);
 
             std::string inputStr{cliStr};
-            wstring inputWstr = converterX.from_bytes(inputStr);
-            std::vector<std::wstring> res = token->cut(inputWstr);
+            std::vector<std::string> res = token->cut(inputStr, isUseHMM);
             std::cout << "result: " << std::endl;
             for (auto w : res) {
                 if (w.size() > 0) {
-                    std::cout << utils::ws2s(w) << "  ";
+                    std::cout << w << "  ";
                 }
             }
             std::cout << std::endl;

@@ -39,11 +39,13 @@ int main(int argc, const char * argv[]) {
             scanf("%s", cliStr);
 
             std::string inputStr{cliStr};
-            std::vector<std::string> res = token->cut(inputStr, isUseHMM);
-            std::cout << "result: " << std::endl;
-            for (auto w : res) {
-                if (w.size() > 0) {
-                    std::cout << w << "  ";
+            std::vector<std::string> res;
+            if (token->cut(inputStr, res, isUseHMM)) {
+                std::cout << "result: " << std::endl;
+                for (auto w : res) {
+                    if (w.size() > 0) {
+                        std::cout << w << "  ";
+                    }
                 }
             }
             std::cout << std::endl;

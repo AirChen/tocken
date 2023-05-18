@@ -16,13 +16,13 @@ using std::string;
 using std::vector;
 
 class HMM {
-    static vector<string> _cut(string sentence);
-    static vector<string> _segHan(string sentence);
-    static vector<string> _segSig(string sentence);
 public:
-    static vector<string> cut(string sentence);
-    static void add_force_splite(string splite);
-        
+    static bool cut(const string& sentence, vector<string>& res);
+    static void add_force_splite(const string& splite);
+private:
+    static bool _cut(const string& sentence, vector<string>& res);
+    static bool _segHan(const string& sentence, vector<string>& res);
+    static bool _segSig(const string& sentence, vector<string>& res);
 };
 
 #endif /* hmmtocken_hpp */

@@ -67,7 +67,7 @@ bool TokenImp::readFile(const char* fname) {
     return true;
 }
 
-void TokenImp::get_DAG(string sentence)
+void TokenImp::get_DAG(const string& sentence)
 {
     for (int i = 0; i < sentence.size(); i++) {
         vector<size_t> endList;
@@ -87,7 +87,7 @@ void TokenImp::get_DAG(string sentence)
     }
 }
 
-vector<string> TokenImp::_cut_DAG(string sentence)
+bool TokenImp::_cut_DAG(const string& sentence, vector<string>& res)
 {
     get_DAG(sentence);
     
@@ -112,19 +112,19 @@ vector<string> TokenImp::_cut_DAG(string sentence)
     
     size_t x = 0;
     string buf;
-    vector<string> tocken;
     
     auto generate = [&](){
         if (buf.size() == 1) {
-            tocken.push_back(buf);
+            res.push_back(buf);
         } else if (_freMap.find(buf) == _freMap.end()) {
-            vector<string> recognized = HMM::cut(buf);
-            tocken.insert(tocken.end(), recognized.begin(), recognized.end());
+            vector<string> recognized;
+            HMM::cut(buf, recognized);
+            res.insert(res.end(), recognized.begin(), recognized.end());
         } else {
             for (auto c : buf) {
                 string str{c};
                 
-                tocken.push_back(str);
+                res.push_back(str);
             }
         }
     };
@@ -139,7 +139,7 @@ vector<string> TokenImp::_cut_DAG(string sentence)
                 generate();
                 buf.clear();
             }
-            tocken.push_back(subWord);
+            res.push_back(subWord);
         }
         x = y;
     }
@@ -148,10 +148,10 @@ vector<string> TokenImp::_cut_DAG(string sentence)
         generate();
     }
     
-    return tocken;
+    return true;
 }
 
-vector<string> TokenImp::_cut_DAG_NO_HMM(string sentence)
+bool TokenImp::_cut_DAG_NO_HMM(const string& sentence, vector<string>& res)
 {
     get_DAG(sentence);
     
@@ -176,7 +176,6 @@ vector<string> TokenImp::_cut_DAG_NO_HMM(string sentence)
     
     size_t x = 0;
     string buf;
-    vector<string> tocken;
     std::regex reg("([a-zA-Z0-9]+(?:\.\d+)?%?)");
     std::smatch sm;
     
@@ -191,18 +190,18 @@ vector<string> TokenImp::_cut_DAG_NO_HMM(string sentence)
             }
         } else {
             if (buf.size() > 0) {
-                tocken.push_back(buf);
+                res.push_back(buf);
                 buf.clear();
             }
-            tocken.push_back(subWord);
+            res.push_back(subWord);
         }
         x = y;
     }
     
-    return tocken;
+    return true;
 }
 
-vector<string> TokenImp::cut(string sentence, bool useHMM) {
-    return useHMM ? _cut_DAG(sentence) : _cut_DAG_NO_HMM(sentence);
+bool TokenImp::cut(const string& sentence, vector<string>& res, bool useHMM) {
+    return useHMM ? _cut_DAG(sentence, res) : _cut_DAG_NO_HMM(sentence, res);
 }
 

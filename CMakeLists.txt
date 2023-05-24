@@ -10,9 +10,11 @@ set(COMPILER_FLAGS_RELEASE)
 
 file(GLOB_RECURSE SRC "src/*.c" "src/*.cpp" "include/*.hpp" "include/*.h")
 add_library(${PROJ} STATIC ${SRC})
+target_include_directories(${PROJ} PRIVATE "src" "include")
 
 file(GLOB_RECURSE DEMO_SRC "demo/*.cpp")
 add_executable(${DEMO} ${DEMO_SRC})
+target_include_directories(${DEMO} PRIVATE "demo" "include")
 target_link_libraries(${DEMO} ${PROJ})
 
 ########################################################################################

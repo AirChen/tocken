@@ -5,7 +5,7 @@
 //  Created by tuRen on 2021/5/20.
 //
 
-#include "../include/probs.hpp"
+#include "probs.hpp"
 
 unordered_map<char, double> begin_p = {
     {'B', -0.26268660809250016},

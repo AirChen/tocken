@@ -5,8 +5,8 @@
 //  Created by airChen on 2021/3/28.
 //
 
-#include "../include/tocken.hpp"
-#include "../include/hmmtocken.hpp"
+#include "tocken.hpp"
+#include "hmmtocken.hpp"
 #include <fstream>
 #include <sstream>
 #include <iostream>
